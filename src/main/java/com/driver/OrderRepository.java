@@ -138,7 +138,7 @@ public class OrderRepository {
         if(deliveryPartnerHashMap.containsKey(partnerId))
             deliveryPartnerHashMap.remove(partnerId); //delivery map removed
         if (orderAndDeliveryPartnerPair.containsKey(partnerId))
-        orderAndDeliveryPartnerPair.remove(partnerId); //his order list is removed
+            orderAndDeliveryPartnerPair.remove(partnerId); //his order list is removed
 
     }
 
