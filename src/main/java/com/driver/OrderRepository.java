@@ -125,10 +125,12 @@ public class OrderRepository {
 
         String s = "";
         int a = max % 60;
-        if(a<10) s="0"+a; else s=s+a;
-        s=s+":";
+
+
         int b = max / 60;
-        if(b<10) s=s+"0"+b; else s=s+b;
+        if(b<10) s="0"+b; else s=s+b;
+        s=s+":";
+        if(a<10) s=s+"0"+a; else s=s+a;
        return s;
     }
     else return "";
