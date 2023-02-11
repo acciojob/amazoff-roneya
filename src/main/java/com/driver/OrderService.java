@@ -41,7 +41,7 @@ public class OrderService {
     }
 
 
-    public int getOrderCountByPartnerId(String partnerId){
+    public Integer getOrderCountByPartnerId(String partnerId){
 
         return orderRepository.getOrderCountByPartnerId(partnerId) ;
     }
@@ -58,7 +58,7 @@ public class OrderService {
         return orderRepository.getAllOrders();
     }
 
-    public int getCountOfUnassignedOrders(){
+    public Integer getCountOfUnassignedOrders(){
         return orderRepository.getCountOfUnassignedOrders();
     }
 

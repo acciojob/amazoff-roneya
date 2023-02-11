@@ -1,5 +1,6 @@
 package com.driver;
 
+import io.swagger.models.auth.In;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
 
@@ -25,42 +26,31 @@ public class OrderRepository {
 
     public void addOrder(Order order)
     {
-        if(!orderHashMap.containsKey(order.getId()))
-            orderHashMap.put(order.getId(),order);
+        orderHashMap.put(order.getId(),order);
     }
 
     public void addPartner(DeliveryPartner deliveryPartner)
     {
-        if(!deliveryPartnerHashMap.containsKey(deliveryPartner.getId()))
+
             deliveryPartnerHashMap.put(deliveryPartner.getId(),deliveryPartner);
     }
 
 
     public void addOrderPartnerPair(String orderId, String partnerId){
 
-        if(!orderAndDeliveryPartnerPair.containsKey(partnerId)){
-            orderAndDeliveryPartnerPair.put(partnerId, new ArrayList<>()); //0th order assigned to deliveryPartner
-            orderAndDeliveryPartnerPair.get(partnerId).add(orderId);
-        }
-        else{
-            List<String> l = orderAndDeliveryPartnerPair.get(partnerId);
-            for(String s : l)
-            {
-             if(s.compareTo(orderId) == 0)
-             {
-                 return; //means we won't add the order for partner cz its already present there;
-             }
-            }
-            orderAndDeliveryPartnerPair.get(partnerId).add(orderId); //else it si not present so add it
+        if(orderHashMap.containsKey(orderId) && deliveryPartnerHashMap.containsKey(partnerId)){
+            if(!orderAndDeliveryPartnerPair.containsKey(partnerId))
+                orderAndDeliveryPartnerPair.put(partnerId, new ArrayList<>()); //0th order assigned to deliveryPartner
 
-        }
-        if(deliveryPartnerHashMap.containsKey(partnerId))
-        {
+            orderAndDeliveryPartnerPair.get(partnerId).add(orderId);
+
             DeliveryPartner deliveryPartner = deliveryPartnerHashMap.get(partnerId);
             deliveryPartner.setNumberOfOrders(deliveryPartner.getNumberOfOrders()+1);
+            orderIdAndDelivery.put(orderId, deliveryPartnerHashMap.get(partnerId));  //id and partnerId linkage
         }
 
-        orderIdAndDelivery.put(orderId, deliveryPartnerHashMap.get(partnerId)); //id and partnerId linkage
+
+
     }
 
     public Order getOrderById(String orderId){
@@ -78,16 +68,21 @@ public class OrderRepository {
     }
 
 
-    public int getOrderCountByPartnerId(String partnerId){
+    public Integer getOrderCountByPartnerId(String partnerId){
 
-        return orderAndDeliveryPartnerPair.get(partnerId).size() ;
+        if(orderAndDeliveryPartnerPair.containsKey(partnerId))
+            return orderAndDeliveryPartnerPair.get(partnerId).size() ;
+        return 0;
     }
 
 
 
     public List<String> getOrdersByPartnerId (String partnerId)
     {
-        return orderAndDeliveryPartnerPair.get(partnerId);
+
+        if(orderAndDeliveryPartnerPair.containsKey(partnerId))
+            return orderAndDeliveryPartnerPair.get(partnerId);
+        return new ArrayList<>(); //empty
     }
 
     public List<String> getAllOrders(){
@@ -100,7 +95,7 @@ public class OrderRepository {
     }
 
 
-    public int getCountOfUnassignedOrders(){
+    public Integer getCountOfUnassignedOrders(){
     return orderHashMap.size() - orderIdAndDelivery.size();
     }
 
@@ -120,7 +115,7 @@ public class OrderRepository {
 
     public String getLastDeliveryTimeByPartnerId(String partnerId){
     if(orderAndDeliveryPartnerPair.containsKey(partnerId)) {
-        int max = 0;
+        Integer max = 0;
         List<String> l = orderAndDeliveryPartnerPair.get(partnerId);
         for (String s : l) {
             if (orderHashMap.containsKey(s)) {
@@ -140,7 +135,7 @@ public class OrderRepository {
 
 
     public void deletePartnerById(String partnerId){
-        if(deliveryPartnerHashMap.containsKey(partnerId));
+        if(deliveryPartnerHashMap.containsKey(partnerId))
             deliveryPartnerHashMap.remove(partnerId); //delivery map removed
         if (orderAndDeliveryPartnerPair.containsKey(partnerId))
         orderAndDeliveryPartnerPair.remove(partnerId); //his order list is removed
@@ -150,14 +145,11 @@ public class OrderRepository {
     public void deleteOrderById (String orderId)
     {
         if(orderHashMap.containsKey(orderId))
-        {
-
-            if(orderHashMap.containsKey(orderId))
-                orderHashMap.remove(orderId);
-            if(orderIdAndDelivery.containsKey(orderId))
-                orderIdAndDelivery.remove(orderId);
-        }
+            orderHashMap.remove(orderId);
+        if(orderIdAndDelivery.containsKey(orderId))
+            orderIdAndDelivery.remove(orderId);
     }
+
 
 
 }
