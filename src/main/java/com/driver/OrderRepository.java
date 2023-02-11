@@ -150,10 +150,20 @@ public class OrderRepository {
 
     public void deleteOrderById (String orderId)
     {
-        if(orderHashMap.containsKey(orderId))
+
             orderHashMap.remove(orderId);
-        if(orderIdAndDelivery.containsKey(orderId))
+        if(orderIdAndDelivery.containsKey(orderId)){
+            String p = orderIdAndDelivery.get(orderId).getId();
+
             orderIdAndDelivery.remove(orderId);
+
+            orderAndDeliveryPartnerPair.get(p).remove(orderId);
+
+            deliveryPartnerHashMap.get(p).setNumberOfOrders(deliveryPartnerHashMap.size());
+
+
+        }
+
     }
 
 
