@@ -11,9 +11,9 @@ import java.util.List;
 @Repository
 public class OrderRepository {
 
-    HashMap<String, Order> orderHashMap;
+    HashMap<String, Order> orderHashMap;  //basic order
     HashMap<String,DeliveryPartner> orderIdAndDelivery; //orderId and its partner
-    HashMap<String, DeliveryPartner> deliveryPartnerHashMap;
+    HashMap<String, DeliveryPartner> deliveryPartnerHashMap; //basic delivery [artner]
     HashMap<String, List<String>> orderAndDeliveryPartnerPair; //ids of partner and list of order ids
 
     public OrderRepository()
@@ -117,17 +117,19 @@ public class OrderRepository {
     if(orderAndDeliveryPartnerPair.containsKey(partnerId)) {
         Integer max = 0;
         List<String> l = orderAndDeliveryPartnerPair.get(partnerId);
-        for (String s : l) {
-            if (orderHashMap.containsKey(s)) {
-                if (orderHashMap.get(s).getDeliveryTime() > max)
-                    max = orderHashMap.get(s).getDeliveryTime();
-            }
-        }
+
+        for (String s : l)
+           max = Math.max(max,orderHashMap.get(s).getDeliveryTime()) ;
 
 
+
+        String s = "";
         int a = max % 60;
+        if(a<10) s="0"+a; else s=s+a;
+        s=s+":";
         int b = max / 60;
-       return b+":"+a;
+        if(b<10) s=s+"0"+b; else s=s+b;
+       return s;
     }
     else return "";
 
@@ -135,11 +137,13 @@ public class OrderRepository {
 
 
     public void deletePartnerById(String partnerId){
-        if(deliveryPartnerHashMap.containsKey(partnerId))
-            deliveryPartnerHashMap.remove(partnerId); //delivery map removed
-        if (orderAndDeliveryPartnerPair.containsKey(partnerId))
-            orderAndDeliveryPartnerPair.remove(partnerId); //his order list is removed
 
+        List <String> l = orderAndDeliveryPartnerPair.get(partnerId);
+        for( String id : l)
+            orderIdAndDelivery.remove(id);
+
+        orderAndDeliveryPartnerPair.remove(partnerId);
+        deliveryPartnerHashMap.remove(partnerId);
     }
 
     public void deleteOrderById (String orderId)
